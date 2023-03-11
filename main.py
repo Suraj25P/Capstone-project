@@ -55,3 +55,4 @@ for each_course in courses:
     return_object[course_code] = _obj
 
 print(return_object)
+# you can now access data from return object as : return_object[<add course_code>][<any property>]
