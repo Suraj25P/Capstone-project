@@ -19,7 +19,7 @@ def load_data(data_path: Path):
     return data
 
 
-# this function will convert to the necessary json format spacy requires to prepare the data
+# this function will convert to the necessary json format spacy requires to prepare the Data
 def convert_json(data):
     bigList = []
     for i in data:
@@ -65,16 +65,17 @@ def create_training(TRAIN_DATA):
     return db
 
 
-# splits and saves the data to disk
+# splits and saves the Data to disk
 def create_split_data(path, data, test_size=0.2):
+    print(path)
     train_data, valid_data = train_test_split(data, test_size=test_size)
-    print("Length of training data: ", len(train_data))
-    print("Length of valid data: ", len(valid_data))
+    print("Length of training Data: ", len(train_data))
+    print("Length of valid Data: ", len(valid_data))
     train_data = create_training(train_data)
-    train_data.to_disk(path + "\\train_data.spacy")
+    train_data.to_disk(path + r"/train_data.spacy")
     valid_data = create_training(valid_data)
-    valid_data.to_disk(path + "\\valid_data.spacy")
-    print("Successfully created training and valid data")
+    valid_data.to_disk(path + r"/valid_data.spacy")
+    print("Successfully created training and valid Data")
 
 
 # this block will execute all functions above
@@ -87,12 +88,13 @@ def prepare_data(path, training_path):
     """
     # gets the original ubiai output
     data = load_data(path)
+    print(data)
     big_list = convert_json(data)
     create_split_data(training_path, big_list)
-    print("Successfully created all necessary training data!")
+    print("Successfully created all necessary training Data!")
 
 
-training_path = r"../data"
+training_path = r"/Users/suraj/PycharmProjects/pythonProject/nlp_model/Data"
 
-path = r"../data/ner.json"
+path = r"/Users/suraj/PycharmProjects/pythonProject/nlp_model/Data/ner.json"
 prepare_data(path, training_path)

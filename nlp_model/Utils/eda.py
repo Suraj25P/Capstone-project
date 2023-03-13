@@ -4,7 +4,7 @@ from collections import Counter
 from itertools import chain
 
 
-# load the data
+# load the Data
 def load_data(data: Path):
     with open(data, 'rb') as f:
         data = json.load(f)
@@ -27,7 +27,7 @@ def count_frequency(data: list):
     return count
 
 
-data_path = r"../data/ner.json"
+data_path = r"../Data/ner.json"
 data = load_data(data_path)
 labels_count = count_frequency(data)
 print(labels_count)
