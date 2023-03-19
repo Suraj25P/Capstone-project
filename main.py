@@ -1,58 +1,14 @@
-import re
-import pdfplumber as pdfplumber
+import syllabus_pre_processor
+from nlp_model import run
 
-# change this accordingly
-file_path = 'E:\\pythonProject\\Shivani\\BA_syllabus.pdf'
+syllabus_pdf_path = r'/Users/suraj/PycharmProjects/pythonProject/BA_syllabus.pdf'
+ner_model_path = "/Users/suraj/PycharmProjects/pythonProject/nlp_model/Models/model-best"
 
+syllabus_object , course_code_list = syllabus_pre_processor.create_syllabus_object(syllabus_pdf_path)
 
-def get_course_title_code(_course_header):
-    # helper function to handle edge case : if course title spans 2 lines
-    _header1 = course_header[0].split('Course Code:')
-    _title = _header1[0] + course_header[1] if len(course_header) > 2 else _header1[0]
-    _code = _header1[1]
-    return _title.strip(), _code.strip()
-
-
-def run_regex(exp, _str):
-    # helper function to run regEX
-    try:
-        return re.search(exp, _str).group(1)
-    except AttributeError:
-        return re.search(exp, _str)
+print("syllabus_object::",syllabus_object['MBA 236']['syllabus'])
+print("course_code_list::",course_code_list)
+skills_required_for_job = run.run_model(ner_model_path)
+print("skills_required_for_job::",skills_required_for_job)
 
 
-# GLOBAL VARIABLES
-complete_text = ''
-course_code_list = []  # To refer in return_object
-return_object = {}  # will contain data of each course
-
-with pdfplumber.open(file_path) as pdf:
-    # loop through every page and get the complete pdf into complete_text
-    for pdf_page in pdf.pages:
-        single_page_text = pdf_page.extract_text()
-        complete_text = complete_text + single_page_text
-courses = complete_text.split('Course Name:')
-courses.pop(0)
-
-for each_course in courses:
-    # get title and code from course header section for each course
-    course_header = each_course.split('Total number of hours')[0].split('\n')
-    course_title, course_code = get_course_title_code(course_header)
-    course_code_list.append(course_code)
-    # remove unnecessary new lines and carriage returns so that regex wont fail
-    each_course = each_course.replace('\n', ' ').replace('\r', '').lower()
-    # extract data for each course
-    _obj = {
-        "title": course_title,
-        "hrs": run_regex(r'total number of hours:(.*?)credits', each_course),
-        "credits": run_regex(r'credits:(.*?)course description:', each_course),
-        "description": run_regex(r'course description:(.*?)course objectives:', each_course),
-        "objectives": run_regex(r'course objectives:(.*?)course learning outcomes:', each_course),
-        "outcomes": run_regex(r'course learning outcomes:(.*?)pedagogy:', each_course),
-        "syllabus": run_regex(r'syllabus(.*?)(essential reference|assessment outline:)', each_course)
-    }
-    # push to global object
-    return_object[course_code] = _obj
-
-print(return_object)
-# you can now access data from return object as : return_object[<add course_code>][<any property>]

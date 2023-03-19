@@ -16,18 +16,15 @@ Preferably experience in Visualization Tools, e.g. Tableau, Qlik as well as Data
 """
 
 
-ner_model_path = "/Users/suraj/PycharmProjects/pythonProject/nlp_model/Models/model-best"
-
-ner_model = spacy.load(ner_model_path)
-print(ner_model)
-# test the algorithm
-doc = ner_model(job_description)
-print(doc.ents)
-skills_required = {}
-# initilize the keys
-for ent in doc.ents:
-    skills_required[ent.label_] = []
-for ent in doc.ents:
-    print(ent.text, '--->', ent.label_)
-    skills_required[ent.label_] += [ent.text]
-print(skills_required)
+def run_model(ner_model_path, job_description_text=job_description):
+    ner_model = spacy.load(ner_model_path)
+    # test the algorithm
+    doc = ner_model(job_description_text)
+    skills_required = {}
+    # initilize the keys
+    for ent in doc.ents:
+        skills_required[ent.label_] = []
+    for ent in doc.ents:
+        #print(ent.text, '--->', ent.label_)
+        skills_required[ent.label_] += [ent.text]
+    return skills_required
